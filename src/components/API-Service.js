@@ -1,6 +1,6 @@
 import config from './config';
 
-const getPets = async () => {
+export const getPets = async () => {
   try {
     const res = await fetch(`${config.API_URL}/pets`);
     await res.json();
@@ -9,7 +9,7 @@ const getPets = async () => {
   }
 };
 
-const adoptPets = async (pet) => {
+export const adoptPet = async (pet) => {
   try {
     const req = {
       method: 'DELETE',
@@ -22,5 +22,14 @@ const adoptPets = async (pet) => {
     await res.json();
   } catch (error) {
     throw new Error('cannot find next pet to be adopted');
+  }
+};
+
+export const getPeople = async () => {
+  try {
+    const res = await fetch(`{config.API_URL}/people`);
+    await res.json();
+  } catch (error) {
+    throw new Error('cannot find people');
   }
 };
