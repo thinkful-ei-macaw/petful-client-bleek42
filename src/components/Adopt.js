@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { getPets, adoptPet, getPeople } from './API-Service';
+import { getPeople, getPets, adoptPet } from './API-Service';
 
 class Adopt extends Component {
   constructor(props) {
@@ -14,7 +14,7 @@ class Adopt extends Component {
     };
   }
 
-  fetchData = () => {
+  fetchData() {
     getPets()
       .then((pets) => {
         getPeople().then((people) => {
@@ -27,10 +27,15 @@ class Adopt extends Component {
       .catch((error) => {
         throw new Error({ error: 'could not find pets or people' });
       });
-  };
+  }
 
   componentDidMount() {
     this.fetchData();
+  }
+
+  handleAdopt(ev) {
+    ev.preventDefault();
+    const target = ev.target.adoption.value;
   }
 
   render() {
@@ -49,10 +54,16 @@ class Adopt extends Component {
                   <p>{pet.gender}</p>
                   <p>{pet.age}</p>
                 </section>
+                <form name="adoption" onClick={this.handleAdopt}>
+                  <label htmlFor="adopt-pet">Adopt {pet.name}</label>
+                  <input type="button" id="adopt-pet">
+                    Click to adopt
+                  </input>
+                </form>
               </div>
             ) : (
               <div>
-                <h4>{type} not found!</h4>
+                <h4>No pets not found!</h4>
               </div>
             );
           })}
