@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { getPeople, getPets, adoptPet } from './API-Service';
+import { getPeople, getPets, adoptPet } from './APIService';
 
 class Adopt extends Component {
   constructor(props) {
@@ -14,7 +14,7 @@ class Adopt extends Component {
     };
   }
 
-  fetchData() {
+  componentDidMount() {
     getPets()
       .then((pets) => {
         getPeople().then((people) => {
@@ -29,10 +29,6 @@ class Adopt extends Component {
       });
   }
 
-  componentDidMount() {
-    this.fetchData();
-  }
-
   handleAdopt(ev) {
     ev.preventDefault();
     const target = ev.target.adoption.value;
@@ -41,8 +37,8 @@ class Adopt extends Component {
   render() {
     const { people, pets } = this.state;
     return (
-      <div>
-        <section>
+      <div className="adopt-page">
+        <section className="pets-section">
           <h1>Pets</h1>
           {Object.entries(pets).map(([pet, type]) => {
             return pet ? (
@@ -68,7 +64,7 @@ class Adopt extends Component {
             );
           })}
         </section>
-        <section>
+        <section className="people-section">
           <h1>People</h1>
         </section>
       </div>

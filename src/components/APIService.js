@@ -27,15 +27,11 @@ const adoptPet = async (pet) => {
 
 const getPeople = async () => {
   try {
-    const res = await fetch(`{config.API_URL}/people`);
+    const res = await fetch(`${config.API_URL}/people`);
     const data = await res.json();
   } catch (error) {
     throw new Error('cannot find people');
   }
 };
 
-export default {
-  getPeople,
-  getPets,
-  adoptPet,
-};
+export { getPeople, getPets, adoptPet };
