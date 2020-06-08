@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { getPeople, getPets, adoptPet } from './APIService';
+import { getPeople, addPerson, getPets, adoptPet } from './APIService';
 
 class Adopt extends Component {
   constructor(props) {
@@ -9,60 +9,94 @@ class Adopt extends Component {
         dog: null,
         cat: null,
       },
+      staff: this.shelterStaff,
       people: [],
-      error: null,
+      nextPerson: sessionStorage.getItem('user-name') || null,
+      error: false,
     };
   }
 
+  shelterStaff = ['Brandon Leek', 'Donna Leek', 'Liz Nye', 'Noah Jennsen'];
+
   componentDidMount() {
-    getPets()
-      .then((pets) => {
-        getPeople().then((people) => {
-          this.setState({
-            pets: pets,
-            people: people,
-          });
+    getPets();
+    getPeople();
+    this.interval = setInterval(() => {
+      const { people, nextPerson } = this.state;
+      if (!people.length) {
+        this.setState({
+          error: true,
         });
-      })
-      .catch((error) => {
-        throw new Error({ error: 'could not find pets or people' });
-      });
+      }
+      if (people[0] === nextPerson && people.length < 5) {
+        this.demoUsers();
+      } else if (people[0] !== nextPerson && people.length > 2) {
+        this.demoAdopt();
+      }
+    }, 10000);
   }
 
-  handleAdopt(ev) {
-    ev.preventDefault();
-    const target = ev.target.adoption.value;
+  componentWillUnmount() {
+    clearInterval(this.interval);
   }
+
+  demoUsers = () => {
+    const person = this.shelterStaff[this.state.people.length - 1];
+    addPerson(person);
+  };
+
+  demoAdopt = () => {
+    const { pets } = this.state;
+    const types = Object.entries(pets).filter(([pet, type]) => pet[type]);
+    if (types.length === 0) {
+      this.setState({
+        error: true,
+      });
+    }
+    this.handleAdopt();
+  };
+
+  handleAdopt = (type) => {
+    adoptPet(type).then(() => {
+      const { people, nextPerson } = this.state;
+      if (people[0] === nextPerson) {
+        sessionStorage.removeItem('user-name');
+        this.setState({
+          nextPerson: null,
+        });
+      }
+    });
+  };
+
+  handleAddPerson = (ev) => {
+    ev.preventDefault();
+    const userName = ev.target.user.value;
+    addPerson(userName).then(() => {
+      sessionStorage.setItem('user-name', userName);
+      this.setState({
+        nextPerson: userName,
+      });
+    });
+  };
 
   render() {
-    const { people, pets } = this.state;
-    return (
-      <div className="adopt-page">
-        {Object.entries(pets).map(([pet]) => {
-          return pet ? (
-            <div>
-              <h4>{pet.name}</h4>
-              <img src={pet.imageURL} alt={pet.description} />
-              <section>
-                <p>{pet.breed}</p>
-                <p>{pet.gender}</p>
-                <p>{pet.age}</p>
-              </section>
-              <button name="adoption" onClick={() => this.handleAdopt}>
-                Adopt {pet.name}
-              </button>
-            </div>
-          ) : (
-            <div>
-              <h4>No pets found!</h4>
-            </div>
-          );
-        })}
-        <section className="people-section">
-          <h1>People</h1>
-        </section>
-      </div>
-    );
+    const { people, pets, staff, error } = this.state;
+    if (error === true) {
+      return (
+        <div className="error-render">
+          <h1>Uh-Oh!</h1>
+          <section>
+            <p>It appears something went wrong!</p>
+          </section>
+        </div>
+      );
+    } else {
+      return (
+        <div className="adopt-page">
+          <h1>Welcome to the adoption page!@</h1>
+        </div>
+      );
+    }
   }
 }
 
