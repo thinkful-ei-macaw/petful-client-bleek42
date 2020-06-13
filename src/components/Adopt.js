@@ -11,7 +11,7 @@ class Adopt extends Component {
       },
       staff: this.shelterStaff,
       people: [],
-      nextPerson: sessionStorage.getItem('user-name') || null,
+      user: sessionStorage.getItem('user-name') || null,
       error: false,
     };
   }
@@ -22,27 +22,46 @@ class Adopt extends Component {
     getPets();
     getPeople();
     this.interval = setInterval(() => {
-      const { people, nextPerson } = this.state;
+      const { people, user } = this.state;
       if (!people.length) {
         this.setState({
           error: true,
         });
       }
-      if (people[0] === nextPerson && people.length < 5) {
+      if (people[0] === user && people.length < 5) {
         this.demoUsers();
-      } else if (people[0] !== nextPerson && people.length > 2) {
+      } else if (people[0] !== user && people.length > 2) {
         this.demoAdopt();
       }
-    }, 10000);
+    }, 5000);
   }
 
   componentWillUnmount() {
     clearInterval(this.interval);
   }
 
+  fetchData = async () => {
+    try {
+      const pets = await getPets();
+      const people = await getPeople();
+      const peopleData = await people.json();
+      const petsData = await pets.json();
+      this.setState({
+        pets: petsData,
+        people: peopleData,
+      });
+    } catch (error) {
+      this.setState({
+        error: true,
+      });
+    }
+  };
+
   demoUsers = () => {
     const person = this.shelterStaff[this.state.people.length - 1];
-    addPerson(person);
+    addPerson(person).then(() => {
+      this.fetchData();
+    });
   };
 
   demoAdopt = () => {
@@ -58,11 +77,11 @@ class Adopt extends Component {
 
   handleAdopt = (type) => {
     adoptPet(type).then(() => {
-      const { people, nextPerson } = this.state;
-      if (people[0] === nextPerson) {
+      const { people, user } = this.state;
+      if (people[0] === user) {
         sessionStorage.removeItem('user-name');
         this.setState({
-          nextPerson: null,
+          user: null,
         });
       }
     });
@@ -74,7 +93,7 @@ class Adopt extends Component {
     addPerson(userName).then(() => {
       sessionStorage.setItem('user-name', userName);
       this.setState({
-        nextPerson: userName,
+        user: userName,
       });
     });
   };
@@ -93,7 +112,16 @@ class Adopt extends Component {
     } else {
       return (
         <div className="adopt-page">
-          <h1>Welcome to the adoption page!@</h1>
+          <header className="adopt-header">
+            <h1>Welcome to the adoption page!</h1>
+          </header>
+          <section>
+            <ul>
+              {people.map((person) => (
+                <li key={person}>{person.name}</li>
+              ))}
+            </ul>
+          </section>
         </div>
       );
     }
