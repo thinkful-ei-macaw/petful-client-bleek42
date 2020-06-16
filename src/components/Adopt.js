@@ -130,9 +130,20 @@ class Adopt extends Component {
           <section className="pet-queue">
             <ul>
               {Object.entries(pets).map(([type, pet]) => {
-                return (
-                  <div key={pet.name}>
+                return pet(
+                  <div>
                     <h4>{pet.name}</h4>
+                    <img src={pet.imageURL} alt={pet.description} />
+                    <details>
+                      | {pet.age} | {pet.type} | {pet.breed} | {pet.gender} |
+                    </details>
+                    <p>{pet.story}</p>
+                    <form>
+                      <label>Adopt this pet?</label>
+                      <input type="submit" id="adopt-btn">
+                        Take {pet.name} home!
+                      </input>
+                    </form>
                   </div>
                 );
               })}
