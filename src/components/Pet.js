@@ -6,23 +6,40 @@ export class Pet extends Component {
     super(props);
     this.state = {
       pets: [],
+      hasError: null,
     };
   }
 
   componentDidMount() {
     if (this.props.type === 'dog') {
-      getDog().then((currDog) => {
-        this.setState({
-          pets: currDog,
+      getDog()
+        .then((res) => res.json())
+        .then((currDog) =>
+          this.setState({
+            pets: currDog,
+          })
+        )
+        .catch((error) => {
+          this.setState({
+            hasError: true,
+            error,
+          });
         });
-      });
     }
     if (this.props.type === 'cat') {
-      getCat().then((currCat) => {
-        this.setState({
-          pets: currCat,
+      getCat()
+        .then((res) => res.json())
+        .then((currCat) =>
+          this.setState({
+            pets: currCat,
+          })
+        )
+        .catch((error) => {
+          this.setState({
+            hasError: true,
+            error,
+          });
         });
-      });
     }
   }
 
