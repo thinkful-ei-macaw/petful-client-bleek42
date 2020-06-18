@@ -1,11 +1,8 @@
 import config from './config';
 
-const getPets = async () => {
+const getDog = async () => {
   try {
-    const res = await fetch(`${config.API_URL}/pets`);
-    if (res.status !== 200) {
-      throw new Error({ message: 'cannot get pets!' });
-    }
+    const res = await fetch(`${config.API_URL}/pets/dogs`);
     const data = await res.json();
     return data;
   } catch (error) {
@@ -16,22 +13,62 @@ const getPets = async () => {
   }
 };
 
-const adoptPet = async (petType) => {
+const getCat = async () => {
   try {
-    const pet = {
-      type: petType,
-    };
+    const res = await fetch(`${config.API_URL}/pets/cats`);
+    const data = await res.json();
+    return data;
+  } catch (error) {
+    throw new Error({
+      message:
+        'something went wrong! please refresh or contact an administrator.',
+    });
+  }
+};
+
+const getAllPets = async () => {
+  try {
+    const res = await fetch(`${config.API_URL}/pets/all`);
+    const data = await res.json();
+    return data;
+  } catch (error) {
+    throw new Error({
+      message:
+        'something went wrong! please refresh or contact an administrator.',
+    });
+  }
+};
+
+const adoptDog = async () => {
+  try {
     const req = {
       method: 'DELETE',
-      body: JSON.stringify(pet),
+      body: JSON.stringify(),
       headers: {
         'content-type': 'application/json',
       },
     };
-    const res = await fetch(`${config.API_URL}/pets`, req);
-    if (res.status !== 200) {
-      throw new Error({ message: 'cannot find pet to adopt!' });
-    }
+    const res = await fetch(`${config.API_URL}/pets/dogs`, req);
+    const data = await res.json();
+    return data;
+  } catch (error) {
+    throw new Error({
+      message:
+        'something went wrong! please refresh or contact an administrator.',
+    });
+  }
+};
+
+const adoptCat = async () => {
+  try {
+    const req = {
+      method: 'DELETE',
+      body: JSON.stringify(),
+      headers: {
+        'content-type': 'application/json',
+      },
+    };
+    const res = await fetch(`${config.API_URL}/pets/cats`, req);
     const data = await res.json();
     return data;
   } catch (error) {
@@ -45,9 +82,6 @@ const adoptPet = async (petType) => {
 const getPeople = async () => {
   try {
     const res = await fetch(`${config.API_URL}/people`);
-    if (res.status !== 200) {
-      throw new Error({ message: 'cannot get people that wish to adopt!' });
-    }
     const data = await res.json();
     return data;
   } catch (error) {
@@ -71,9 +105,6 @@ const addPerson = async (newPerson) => {
       },
     };
     const res = await fetch(`${config.API_URL}/people`, req);
-    if (res.status !== 200) {
-      throw new Error({ message: 'cannot add a new person!' });
-    }
     const data = await res.json();
     return data;
   } catch (error) {
@@ -84,4 +115,4 @@ const addPerson = async (newPerson) => {
   }
 };
 
-export { getPeople, addPerson, getPets, adoptPet };
+export { getCat, getDog, adoptCat, adoptDog, getAllPets, getPeople, addPerson };
