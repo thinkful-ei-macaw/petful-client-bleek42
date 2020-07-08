@@ -5,43 +5,34 @@ export class Pet extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      pets: [],
+      dog: null,
+      cat: null,
       hasError: null,
     };
   }
 
   componentDidMount() {
-    if (this.props.type === 'dog') {
-      getDog()
-        .then((res) => res.json())
-        .then((currDog) =>
-          this.setState({
-            pets: currDog,
-          })
-        )
-        .catch((error) => {
-          this.setState({
-            hasError: true,
-            error,
-          });
-        });
+    const { type } = this.props;
+    if(type === 'dog') {
+      getDog().then((nextDog) => {
+        this.setState({
+          dog: nextDog,
+        })
+      })
     }
-    if (this.props.type === 'cat') {
-      getCat()
-        .then((res) => res.json())
-        .then((currCat) =>
-          this.setState({
-            pets: currCat,
-          })
-        )
-        .catch((error) => {
-          this.setState({
-            hasError: true,
-            error,
-          });
-        });
+    else if(type === 'cat') {
+      getCat().then((nextCat) => {
+        this.setState({
+          cat: nextCat
+        })
+      })
     }
-  }
+    else {
+      this.setState({
+        hasError: true
+      })
+    }
+   }
 
   handleAdopt = async (ev) => {
     ev.preventDefault();
@@ -52,12 +43,14 @@ export class Pet extends Component {
     console.log(pets);
     return (
       <div>
-        <h4>{pets.name}</h4>
+        {/* <h4>{pets.name}</h4>
         <img src={pets.imageURL} alt={pets.description} />
         <details>
-          | {pets.age} | {pets.type} | {pets.breed} | {pets.gender} |
+          <p>
+            | {pets.age} | {pets.type} | {pets.breed} | {pets.gender} |
+          </p>
         </details>
-        <p>{pets.story}</p>
+        <p>{pets.story}</p> */}
       </div>
     );
   }

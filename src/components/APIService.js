@@ -4,6 +4,7 @@ const getDog = async () => {
   try {
     const res = await fetch(`${config.API_URL}/pets/dogs`);
     const data = await res.json();
+    console.log(data);
     return data;
   } catch (error) {
     throw new Error({
@@ -43,12 +44,12 @@ const adoptDog = async () => {
   try {
     const req = {
       method: 'DELETE',
-      body: JSON.stringify(),
+      body: JSON.stringify('dog'),
       headers: {
         'content-type': 'application/json',
       },
     };
-    const res = await fetch(`${config.API_URL}/pets/dogs`, req);
+    const res = await fetch(`${config.API_URL}/pets/adopt-dog`, req);
     const data = await res.json();
     return data;
   } catch (error) {
@@ -63,12 +64,12 @@ const adoptCat = async () => {
   try {
     const req = {
       method: 'DELETE',
-      body: JSON.stringify(),
+      body: JSON.stringify('cat'),
       headers: {
         'content-type': 'application/json',
       },
     };
-    const res = await fetch(`${config.API_URL}/pets/cats`, req);
+    const res = await fetch(`${config.API_URL}/pets/adopt-cat`, req);
     const data = await res.json();
     return data;
   } catch (error) {

@@ -1,33 +1,54 @@
 import React, { Component } from 'react';
 
 import Pet from './Pet';
-import {
-  getDog,
-  getCat,
-  getPeople,
-  addPerson,
-  getAllPets,
-  adoptPet,
-} from './APIService';
+import { getPeople, addPerson, getAllPets } from './APIService';
 
 class Adopt extends Component {
   constructor(props) {
     super(props);
     this.state = {
       people: [],
-      staff: this.shelterStaff,
+      staff: [],
       user: sessionStorage.getItem('user-name') || null,
     };
   }
 
-  shelterStaff = ['Brandon Leek', 'Donna Leek', 'Liz Nye', 'Noah Jennsen'];
-
-  componentDidMount() {
-    getPeople().then((data) => {
-      this.setState({
-        people: data.people,
+  setStaff = () => {
+    const shelterStaff = [
+      {
+        name: 'Brandon Leek',
+        id: Math.round(Math.random() * 10),
+      },
+      {
+        name: 'Donna Leek',
+        id: Math.round(Math.random() * 10),
+      },
+      {
+        name: 'Liz Nye',
+        id: Math.round(Math.random() * 10),
+      },
+      {
+        name: 'Brandon Leek',
+        id: Math.round(Math.random() * 10),
+      },
+    ];
+    shelterStaff.map((name, id) => {
+      return this.setState({
+        staff: shelterStaff,
+        ...name,
+        ...id,
       });
     });
+    console.log(this.state.staff);
+  };
+
+  componentDidMount() {
+    this.setStaff();
+    getPeople().then((data) =>
+      this.setState({
+        people: data.people,
+      })
+    );
   }
 
   // componentWillUnmount() {
@@ -55,7 +76,7 @@ class Adopt extends Component {
 
   render() {
     const { people, user, staff, error } = this.state;
-    console.log(people);
+    console.log(staff);
     return (
       <div className="adopt-page">
         <header className="adopt-header">
