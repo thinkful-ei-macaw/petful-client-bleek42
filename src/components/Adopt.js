@@ -1,13 +1,11 @@
 import React, { Component } from 'react';
 
-import Pet from './Pet';
 import {
   getPeople,
   addPerson,
   getAllPets,
   getNextPets,
-  adoptCat,
-  adoptDog,
+  adoptPet,
 } from './APIService';
 
 class Adopt extends Component {
@@ -24,6 +22,19 @@ class Adopt extends Component {
 
   componentDidMount() {
     this.getData();
+    this.interval = setInterval(() => {
+      const { user, people } = this.state;
+      if (!people.length || !user) return;
+      if (people[0] === user && people.length < 5) {
+        this.demoUsers();
+      } else if (people[0] !== user && people.length > 1) {
+        this.handleQueue();
+      }
+    }, 5000);
+  }
+
+  componentWillMount() {
+    clearInterval(this.interval);
   }
 
   getData = async () => {
@@ -39,6 +50,19 @@ class Adopt extends Component {
         hasError: true,
       });
     }
+  };
+
+  handleAdopt = () => {
+    adoptPet().then(() => {
+      const { people, user } = this.state;
+      if (people[0] === user) {
+        sessionStorage.removeItem('user-name');
+        this.setState({
+          user: null,
+        });
+      }
+      this.getData();
+    });
   };
 
   setStaff = () => {
@@ -70,15 +94,17 @@ class Adopt extends Component {
     console.log(this.state.staff);
   };
 
-  // componentWillUnmount() {
-  //   clearInterval(this.interval);
-  // }
+  handleQueue = () => {
+    const { pets } = this.state;
+    const types = Object.entries(pets).filter(([pet, type]) => pet !== null);
+    const petAdopted = types[Math.floor(Math.randon() * types.length)][0];
+    this.handleAdopt(petAdopted);
+  };
 
   demoUsers = () => {
     const person = this.shelterStaff[this.state.people.length - 1];
     addPerson(person).then(() => {
-      this.setPeople();
-      this.setPets();
+      this.getData();
     });
   };
 
@@ -90,11 +116,13 @@ class Adopt extends Component {
       this.setState({
         user: userName,
       });
+      this.getData();
     });
   };
 
   render() {
     const { pets, people, user, staff, error } = this.state;
+    const canAdopt = (!people.length && user) || people[0] === user;
     console.log(people);
     return (
       <div className="adopt-page">
@@ -103,12 +131,15 @@ class Adopt extends Component {
         </header>
         <section className="people-queue">
           <ul>
-            {people.map((person) => (
-              <li name={person === user ? 'user' : ''} key={person[0]}>
-                {person}
-              </li>
+            {Object.entries(people).map((person) => (
+              <li key={person}>{person}</li>
             ))}
           </ul>
+          <form onSubmit={() => this.handleAddPerson}>
+            <label htmlFor="user" />
+            <input type="text" name="user" />
+            <button>Submit</button>
+          </form>
         </section>
 
         <section className="pet-queue">
@@ -117,10 +148,34 @@ class Adopt extends Component {
             return (
               <div>
                 <details>
+                  <img src={dog.imageURL} alt={dog.description} />
+                  <ul>
+                    <li>{dog.name}</li>
+                    <li>{dog.breed}</li>
+                    <li>{dog.gender}</li>
+                  </ul>
+                  <p>{dog.story}</p>
+                  <button
+                    disabled={!canAdopt}
+                    onClick={() => this.handleAdopt(type)}
+                  >
+                    Adopt this Dog!
+                  </button>
+                </details>
+                <details>
                   <img src={cat.imageURL} alt={cat.description} />
                   <ul>
                     <li>{cat.name}</li>
+                    <li>{cat.breed}</li>
+                    <li>{cat.gender}</li>
                   </ul>
+                  <p>{cat.story}</p>
+                  <button
+                    disabled={!canAdopt}
+                    onClick={() => this.handleAdopt(type)}
+                  >
+                    Adopt this Cat!
+                  </button>
                 </details>
               </div>
             );

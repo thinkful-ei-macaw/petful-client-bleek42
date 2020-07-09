@@ -4,7 +4,6 @@ const getNextPets = async () => {
   try {
     const res = await fetch(`${config.API_URL}/pets/next`);
     const data = await res.json();
-    console.log(data);
     return data;
   } catch (error) {
     throw new Error({
@@ -27,16 +26,16 @@ const getAllPets = async () => {
   }
 };
 
-const adoptDog = async () => {
+const adoptPet = async (type) => {
   try {
     const req = {
       method: 'DELETE',
-      body: JSON.stringify('dog'),
+      body: JSON.stringify(type),
       headers: {
         'content-type': 'application/json',
       },
     };
-    const res = await fetch(`${config.API_URL}/pets/adopt-dog`, req);
+    const res = await fetch(`${config.API_URL}/pets/select`, req);
     const data = await res.json();
     return data;
   } catch (error) {
@@ -47,25 +46,25 @@ const adoptDog = async () => {
   }
 };
 
-const adoptCat = async () => {
-  try {
-    const req = {
-      method: 'DELETE',
-      body: JSON.stringify('cat'),
-      headers: {
-        'content-type': 'application/json',
-      },
-    };
-    const res = await fetch(`${config.API_URL}/pets/adopt-cat`, req);
-    const data = await res.json();
-    return data;
-  } catch (error) {
-    throw new Error({
-      message:
-        'something went wrong! please refresh or contact an administrator.',
-    });
-  }
-};
+// const adoptCat = async () => {
+//   try {
+//     const req = {
+//       method: 'DELETE',
+//       body: JSON.stringify('cat'),
+//       headers: {
+//         'content-type': 'application/json',
+//       },
+//     };
+//     const res = await fetch(`${config.API_URL}/pets/cat`, req);
+//     const data = await res.json();
+//     return data;
+//   } catch (error) {
+//     throw new Error({
+//       message:
+//         'something went wrong! please refresh or contact an administrator.',
+//     });
+//   }
+// };
 
 const getPeople = async () => {
   try {
@@ -103,4 +102,4 @@ const addPerson = async (newPerson) => {
   }
 };
 
-export { getNextPets, adoptCat, adoptDog, getAllPets, getPeople, addPerson };
+export { getNextPets, adoptPet, getAllPets, getPeople, addPerson };
