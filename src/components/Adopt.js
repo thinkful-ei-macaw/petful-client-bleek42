@@ -1,17 +1,45 @@
 import React, { Component } from 'react';
 
 import Pet from './Pet';
-import { getPeople, addPerson, getAllPets } from './APIService';
+import {
+  getPeople,
+  addPerson,
+  getAllPets,
+  getNextPets,
+  adoptCat,
+  adoptDog,
+} from './APIService';
 
 class Adopt extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      pets: [],
       people: [],
       staff: [],
       user: sessionStorage.getItem('user-name') || null,
+      hasError: null,
     };
   }
+
+  componentDidMount() {
+    this.getData();
+  }
+
+  getData = async () => {
+    try {
+      const petData = await getNextPets();
+      const peopleData = await getPeople();
+      this.setState({
+        pets: petData,
+        people: peopleData,
+      });
+    } catch (error) {
+      this.setState({
+        hasError: true,
+      });
+    }
+  };
 
   setStaff = () => {
     const shelterStaff = [
@@ -42,15 +70,6 @@ class Adopt extends Component {
     console.log(this.state.staff);
   };
 
-  componentDidMount() {
-    this.setStaff();
-    getPeople().then((data) =>
-      this.setState({
-        people: data.people,
-      })
-    );
-  }
-
   // componentWillUnmount() {
   //   clearInterval(this.interval);
   // }
@@ -75,8 +94,8 @@ class Adopt extends Component {
   };
 
   render() {
-    const { people, user, staff, error } = this.state;
-    console.log(staff);
+    const { pets, people, user, staff, error } = this.state;
+    console.log(people);
     return (
       <div className="adopt-page">
         <header className="adopt-header">
@@ -91,9 +110,21 @@ class Adopt extends Component {
             ))}
           </ul>
         </section>
+
         <section className="pet-queue">
-          <Pet type="dog" />
-          <Pet type="cat" />
+          {Object.entries(pets).map((type) => {
+            const { cat, dog } = type[1];
+            return (
+              <div>
+                <details>
+                  <img src={cat.imageURL} alt={cat.description} />
+                  <ul>
+                    <li>{cat.name}</li>
+                  </ul>
+                </details>
+              </div>
+            );
+          })}
         </section>
       </div>
     );

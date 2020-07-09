@@ -1,23 +1,10 @@
 import config from './config';
 
-const getDog = async () => {
+const getNextPets = async () => {
   try {
-    const res = await fetch(`${config.API_URL}/pets/dogs`);
+    const res = await fetch(`${config.API_URL}/pets/next`);
     const data = await res.json();
     console.log(data);
-    return data;
-  } catch (error) {
-    throw new Error({
-      message:
-        'something went wrong! please refresh or contact an administrator.',
-    });
-  }
-};
-
-const getCat = async () => {
-  try {
-    const res = await fetch(`${config.API_URL}/pets/cats`);
-    const data = await res.json();
     return data;
   } catch (error) {
     throw new Error({
@@ -116,4 +103,4 @@ const addPerson = async (newPerson) => {
   }
 };
 
-export { getCat, getDog, adoptCat, adoptDog, getAllPets, getPeople, addPerson };
+export { getNextPets, adoptCat, adoptDog, getAllPets, getPeople, addPerson };
