@@ -33,7 +33,7 @@ class Adopt extends Component {
     }, 5000);
   }
 
-  componentWillMount() {
+  componentWillUnmount() {
     clearInterval(this.interval);
   }
 
@@ -65,28 +65,29 @@ class Adopt extends Component {
     });
   };
 
+  shelterStaff = [
+    {
+      name: 'Brandon Leek',
+      id: Math.round(Math.random() * 10),
+    },
+    {
+      name: 'Donna Leek',
+      id: Math.round(Math.random() * 10),
+    },
+    {
+      name: 'Liz Nye',
+      id: Math.round(Math.random() * 10),
+    },
+    {
+      name: 'Brandon Leek',
+      id: Math.round(Math.random() * 10),
+    },
+  ];
+
   setStaff = () => {
-    const shelterStaff = [
-      {
-        name: 'Brandon Leek',
-        id: Math.round(Math.random() * 10),
-      },
-      {
-        name: 'Donna Leek',
-        id: Math.round(Math.random() * 10),
-      },
-      {
-        name: 'Liz Nye',
-        id: Math.round(Math.random() * 10),
-      },
-      {
-        name: 'Brandon Leek',
-        id: Math.round(Math.random() * 10),
-      },
-    ];
-    shelterStaff.map((name, id) => {
+    const mapStaff = this.shelterStaff.map((name, id) => {
       return this.setState({
-        staff: shelterStaff,
+        staff: mapStaff,
         ...name,
         ...id,
       });
@@ -96,7 +97,7 @@ class Adopt extends Component {
 
   handleQueue = () => {
     const { pets } = this.state;
-    const types = Object.entries(pets).filter(([pet, type]) => pet !== null);
+    const types = Object.entries(pets).filter(([pet]) => pet !== null);
     const petAdopted = types[Math.floor(Math.randon() * types.length)][0];
     this.handleAdopt(petAdopted);
   };
@@ -134,12 +135,18 @@ class Adopt extends Component {
             {Object.entries(people).map((person) => (
               <li key={person}>{person}</li>
             ))}
+            {!user ? (
+              <li>
+                <form onSubmit={() => this.handleAddPerson}>
+                  <label htmlFor="user" />
+                  <input type="text" name="user" />
+                  <button>Submit</button>
+                </form>
+              </li>
+            ) : (
+              ''
+            )}
           </ul>
-          <form onSubmit={() => this.handleAddPerson}>
-            <label htmlFor="user" />
-            <input type="text" name="user" />
-            <button>Submit</button>
-          </form>
         </section>
 
         <section className="pet-queue">
@@ -155,10 +162,7 @@ class Adopt extends Component {
                     <li>{dog.gender}</li>
                   </ul>
                   <p>{dog.story}</p>
-                  <button
-                    disabled={!canAdopt}
-                    onClick={() => this.handleAdopt(type)}
-                  >
+                  <button onClick={() => this.handleAdopt('dog')}>
                     Adopt this Dog!
                   </button>
                 </details>
@@ -172,7 +176,7 @@ class Adopt extends Component {
                   <p>{cat.story}</p>
                   <button
                     disabled={!canAdopt}
-                    onClick={() => this.handleAdopt(type)}
+                    onClick={() => this.handleAdopt('cat')}
                   >
                     Adopt this Cat!
                   </button>
